@@ -101,7 +101,6 @@ function CityNameAutocomplete(config) {
                 if ('' === countryCode) {
                     countryCode = countryElement.options[countryElement.selectedIndex].value;
                 }
-                console.log('Country code', countryCode);
                 if ('' === countryCode) {
                     countryCode = 'de';
                 }
