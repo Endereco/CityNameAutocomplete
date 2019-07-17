@@ -148,7 +148,7 @@ function CityNameAutocomplete(config) {
      * Renders predictions in a dropdown.
      */
     this.renderDropdown = function() {
-        var ul
+        var ul;
         var li;
         var cityName;
         var input;
@@ -264,7 +264,7 @@ function CityNameAutocomplete(config) {
             $self.dropdown.parentElement.removeChild($self.dropdown);
             $self.dropdown = undefined;
         }
-    }
+    };
 
     /**
      * Init postCodeAutocomplete.
