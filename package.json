@@ -1,6 +1,6 @@
 {
   "name": "@endereco/citynameautocomplete",
-  "version": "1.2",
+  "version": "1.2.0",
   "description": "",
   "main": "CityNameAutocomplete.js",
   "scripts": {
