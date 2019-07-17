@@ -130,7 +130,7 @@ function CityNameAutocomplete(config) {
         var includes = false;
 
         $self.predictions.forEach( function(prediction) {
-            if (input === prediction.postCode) {
+            if (input === prediction.cityName) {
                 includes = true;
             }
         });
