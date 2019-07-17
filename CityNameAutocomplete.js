@@ -122,6 +122,29 @@ function CityNameAutocomplete(config) {
     }
 
     /**
+     * Validate fields.
+     */
+    this.validate = function() {
+        var input = $self.inputElement.value.trim();
+        var event;
+        var includes = false;
+
+        $self.predictions.forEach( function(prediction) {
+            if (input === prediction.postCode) {
+                includes = true;
+            }
+        });
+
+        if (includes) {
+            event = $self.createEvent('endereco.valid');
+            $self.inputElement.dispatchEvent(event);
+        } else {
+            event = $self.createEvent('endereco.check');
+            $self.inputElement.dispatchEvent(event);
+        }
+    };
+
+    /**
      * Renders predictions in a dropdown.
      */
     this.renderDropdown = function() {
@@ -276,12 +299,14 @@ function CityNameAutocomplete(config) {
             acCall.then( function($data) {
                 $self.predictions = $data.result.predictions;
                 $self.renderDropdown();
+                $self.validate();
             });
         });
 
         // Register blur event
         $self.inputElement.addEventListener('blur', function() {
             $self.removeDropdown();
+            $self.validate();
         });
 
         // Register mouse navigation
