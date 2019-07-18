@@ -407,7 +407,7 @@ function CityNameAutocomplete(config) {
 
         $self.dirty = false;
 
-        console.log('CityNameAutocomplete instantiated.');
+        console.log('CityNameAutocomplete initiated.');
     }
 
     // Check if the browser is chrome
