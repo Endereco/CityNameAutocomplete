@@ -7,6 +7,17 @@
  */
 function CityNameAutocomplete(config) {
     var $self  = this;
+    /**
+     * Combine object, IE 11 compatible.
+     */
+    this.mergeObjects = function(objects) {
+        return objects.reduce(function (r, o) {
+            Object.keys(o).forEach(function (k) {
+                r[k] = o[k];
+            });
+            return r;
+        }, {})
+    };
     this.requestBody = {
         "jsonrpc": "2.0",
         "id": 1,
@@ -24,7 +35,8 @@ function CityNameAutocomplete(config) {
     this.fieldsAreSet = false;
     this.dirty = false;
     this.originalInput;
-    this.config = Object.assign(this.defaultConfig, config);
+    this.blockInput = false;
+    this.config = $self.mergeObjects([this.defaultConfig, config]);
     this.connector = new XMLHttpRequest();
 
     this.createEvent = function(eventName) {
@@ -44,7 +56,7 @@ function CityNameAutocomplete(config) {
      * @param newConfig
      */
     this.updateConfig = function(newConfig) {
-        $self.config = Object.assign($self.config, newConfig);
+        $self.config = $self.mergeObjects([$self.config, newConfig]);
     }
 
     /**
@@ -202,10 +214,12 @@ function CityNameAutocomplete(config) {
             }
             li.addEventListener('mouseover', function() {
                 this.style.backgroundColor = 'rgba(0, 137, 167, 0.25)';
+                $self.blockInput = true;
             });
 
             li.addEventListener('mouseout', function() {
                 this.style.backgroundColor =  'transparent';
+                $self.blockInput = false;
             });
 
             regEx = new RegExp('(' + input + ')', 'ig');
@@ -264,6 +278,7 @@ function CityNameAutocomplete(config) {
             $self.dropdown.parentElement.removeChild($self.dropdown);
             $self.dropdown = undefined;
         }
+        $self.blockInput = false;
     };
 
     /**
@@ -323,7 +338,7 @@ function CityNameAutocomplete(config) {
         // Register mouse navigation
         $self.inputElement.addEventListener('keydown', function(mEvent) {
             var selectedCityName, cityNameField, event;
-            if ('ArrowUp' === mEvent.code) {
+            if ('ArrowUp' === mEvent.code || 'Up' === mEvent.key) {
                 mEvent.preventDefault();
                 if (0 < $self.activeElementIndex) {
                     $self.activeElementIndex--;
@@ -340,7 +355,7 @@ function CityNameAutocomplete(config) {
                 $self.renderDropdown();
             }
 
-            if ('ArrowDown' === mEvent.code) {
+            if ('ArrowDown' === mEvent.code || 'Down' === mEvent.key) {
                 mEvent.preventDefault();
                 if ($self.activeElementIndex < ($self.predictions.length-1)) {
                     $self.activeElementIndex++;
@@ -357,7 +372,7 @@ function CityNameAutocomplete(config) {
                 $self.renderDropdown();
             }
 
-            if ('Enter' === mEvent.code) {
+            if ('Enter' === mEvent.code || 'Enter' === mEvent.key) {
                 mEvent.preventDefault();
 
                 // If only one prediction
@@ -382,6 +397,11 @@ function CityNameAutocomplete(config) {
                 }
 
                 $self.removeDropdown();
+            }
+
+            if ($self.blockInput) {
+                mEvent.preventDefault();
+                return;
             }
         });
 
