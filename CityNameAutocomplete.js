@@ -82,8 +82,6 @@ function CityNameAutocomplete(config) {
      */
     this.getPredictions = function() {
         $self.activeElementIndex = -1;
-        $self.originalInput = '';
-        $self.originalPostCode = '';
         return new Promise( function(resolve, reject) {
             var countryCode = 'de';
             var countryElement;
@@ -151,6 +149,9 @@ function CityNameAutocomplete(config) {
 
         if (includes) {
             event = $self.createEvent('endereco.valid');
+            $self.inputElement.dispatchEvent(event);
+        } else if('' === input) {
+            event = $self.createEvent('endereco.clean');
             $self.inputElement.dispatchEvent(event);
         } else {
             event = $self.createEvent('endereco.check');
@@ -270,10 +271,9 @@ function CityNameAutocomplete(config) {
                     postCodeField = document.querySelector($self.config.secondaryInputSelectors.postCode);
                     event = $self.createEvent('endereco.valid');
                     postCodeField.dispatchEvent(event);
-
-                    self.originalPostCode = document.querySelector($self.config.secondaryInputSelectors.postCode).value;
                 }
 
+                $self.saveOriginal();
                 $self.removeDropdown();
             });
 
@@ -295,6 +295,30 @@ function CityNameAutocomplete(config) {
     };
 
     /**
+     * Resotre original values.
+     */
+    this.restoreOriginal = function() {
+        var postCodeField = document.querySelector($self.config.secondaryInputSelectors.postCode);
+        if (postCodeField) {
+            postCodeField.value = $self.originalPostCode + '';
+        }
+        $self.inputElement.value = $self.originalInput + '';
+
+
+    }
+
+    /**
+     * Save original state.
+     */
+    this.saveOriginal = function() {
+        var postCodeField = document.querySelector($self.config.secondaryInputSelectors.postCode);
+        if (postCodeField) {
+            $self.originalPostCode = postCodeField.value + '';
+        }
+        $self.originalInput = $self.inputElement.value + '';
+    }
+
+    /**
      * Init postCodeAutocomplete.
      */
     this.init = function() {
@@ -305,6 +329,8 @@ function CityNameAutocomplete(config) {
             $self.dropdownDraw = true;
             $self.predictions = [];
             $self.activeElementIndex = -1;
+
+            $self.saveOriginal();
         } catch(e) {
             console.log('Could not initiate CityNameAutocomplete because of error.', e);
         }
@@ -325,26 +351,28 @@ function CityNameAutocomplete(config) {
         $self.inputElement.addEventListener('input', function() {
             var $this = this;
             var acCall = $self.getPredictions();
+            $self.originalInput = this.value;
             acCall.then( function($data) {
                 $self.predictions = $data.result.predictions;
                 if ($this === document.activeElement) {
                     $self.renderDropdown();
                 }
-                $self.validate();
-            });
+            }, function($data){console.log('Rejected with data:', $data)});
         });
 
         $self.inputElement.addEventListener('focus', function() {
             var acCall = $self.getPredictions();
+            $self.saveOriginal();
             acCall.then( function($data) {
                 $self.predictions = $data.result.predictions;
                 $self.validate();
-            });
+            }, function($data){console.log('Rejected with data:', $data)});
         });
 
         // Register blur event
         $self.inputElement.addEventListener('blur', function() {
             $self.removeDropdown();
+            $self.restoreOriginal();
             $self.validate();
         });
 
@@ -418,9 +446,7 @@ function CityNameAutocomplete(config) {
                     postCodeField.dispatchEvent(event);
                 }
 
-                $self.originalInput = $self.inputElement.value;
-                $self.originalPostCode = postCodeField.value;
-
+                $self.saveOriginal();
                 $self.removeDropdown();
             }
 
