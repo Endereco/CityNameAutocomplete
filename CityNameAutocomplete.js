@@ -379,7 +379,7 @@ function CityNameAutocomplete(config) {
         // Register mouse navigation
         $self.inputElement.addEventListener('keydown', function(mEvent) {
             var selectedPostCode, postCodeField, event;
-            if ('ArrowUp' === mEvent.code || 'Up' === mEvent.key) {
+            if ('ArrowUp' === mEvent.key || 'Up' === mEvent.key) {
                 mEvent.preventDefault();
 
                 if (0 === $self.activeElementIndex) {
@@ -405,7 +405,7 @@ function CityNameAutocomplete(config) {
                 $self.renderDropdown();
             }
 
-            if ('ArrowDown' === mEvent.code || 'Down' === mEvent.key) {
+            if ('ArrowDown' === mEvent.key || 'Down' === mEvent.key) {
                 mEvent.preventDefault();
                 if ($self.activeElementIndex < ($self.predictions.length-1)) {
                     $self.activeElementIndex++;
@@ -422,7 +422,7 @@ function CityNameAutocomplete(config) {
                 $self.renderDropdown();
             }
 
-            if ('Enter' === mEvent.code || 'Enter' === mEvent.key) {
+            if ('Enter' === mEvent.key || 'Enter' === mEvent.key) {
                 mEvent.preventDefault();
 
                 // If only one prediction
