@@ -325,7 +325,7 @@ function CityNameAutocomplete(config) {
      * Init postCodeAutocomplete.
      */
     this.init = function() {
-
+        var postCodeSet = false;
         try {
             $self.inputElement = document.querySelector($self.config.inputSelector);
             $self.dropdown = undefined;
@@ -403,6 +403,9 @@ function CityNameAutocomplete(config) {
                         postCodeField = document.querySelector($self.config.secondaryInputSelectors.postCode);
                         if (selectedPostCode && postCodeField) {
                             postCodeField.value = selectedPostCode.trim();
+                            postCodeSet = true;
+                        } else {
+                            postCodeSet = false;
                         }
                     }
                 }
@@ -423,6 +426,9 @@ function CityNameAutocomplete(config) {
                     postCodeField = document.querySelector($self.config.secondaryInputSelectors.postCode);
                     if (selectedPostCode && postCodeField) {
                         postCodeField.value = selectedPostCode.trim();
+                        postCodeSet = true;
+                    } else {
+                        postCodeSet = false;
                     }
                 }
 
