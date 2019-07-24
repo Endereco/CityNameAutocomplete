@@ -381,7 +381,7 @@ function CityNameAutocomplete(config) {
 
         // Register mouse navigation
         $self.inputElement.addEventListener('keydown', function(mEvent) {
-            var selectedPostCode, postCodeField, postCodeSet = false, event;
+            var selectedPostCode, postCodeField, event;
             if ('ArrowUp' === mEvent.key || 'Up' === mEvent.key) {
                 mEvent.preventDefault();
 
