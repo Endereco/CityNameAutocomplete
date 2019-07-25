@@ -36,6 +36,7 @@ function CityNameAutocomplete(config) {
     this.dirty = false;
     this.originalInput;
     this.originalPostCode;
+    this.lastInputError = true;
     this.blockInput = false;
     this.config = $self.mergeObjects([this.defaultConfig, config]);
     this.connector = new XMLHttpRequest();
@@ -87,15 +88,19 @@ function CityNameAutocomplete(config) {
             var countryElement;
             // On data receive
             $self.connector.onreadystatechange = function() {
+                var $data = {};
                 if(4 === $self.connector.readyState) {
                     if ($self.connector.responseText && '' !== $self.connector.responseText) {
                         $data = JSON.parse($self.connector.responseText);
                         if ($data.result) {
+                            $self.lastInputError = false;
                             resolve($data);
                         } else {
+                            $self.lastInputError = true;
                             reject($data);
                         }
                     } else {
+                        $self.lastInputError = true;
                         reject($data);
                     }
                 }
@@ -140,6 +145,10 @@ function CityNameAutocomplete(config) {
         var input = $self.inputElement.value.trim();
         var event;
         var includes = false;
+
+        if ($self.lastInputError) {
+            return;
+        }
 
         $self.predictions.forEach( function(prediction) {
             if (input === prediction.cityName) {
