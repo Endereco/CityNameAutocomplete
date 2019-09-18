@@ -30,6 +30,7 @@ function CityNameAutocomplete(config) {
     }
     this.defaultConfig = {
         'useWatcher': true,
+        'referer': 'not_set',
         'tid': 'not_set'
     };
     this.fieldsAreSet = false;
@@ -129,11 +130,19 @@ function CityNameAutocomplete(config) {
                 $self.requestBody.params.language = $self.config.language;
             }
 
+            /**
+             * Backward compatibility for referer
+             * If not set, it will use the browser url.
+             */
+            if ('not_set' === $self.config.referer) {
+                $self.config.referer = window.location.href;
+            }
+
             $self.connector.open('POST', $self.config.endpoint, true);
             $self.connector.setRequestHeader("Content-type", "application/json");
             $self.connector.setRequestHeader("X-Auth-Key", $self.config.apiKey);
             $self.connector.setRequestHeader("X-Transaction-Id", $self.config.tid);
-            $self.connector.setRequestHeader("X-Transaction-Referer", window.location.href);
+            $self.connector.setRequestHeader("X-Transaction-Referer", $self.config.referer);
             $self.connector.send(JSON.stringify($self.requestBody));
         });
     }
