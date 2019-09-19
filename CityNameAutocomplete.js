@@ -387,7 +387,7 @@ function CityNameAutocomplete(config) {
         });
 
         $self.inputElement.addEventListener('focus', function() {
-            if ('' === this.value) {
+            if ('' === this.value && 'not_set' !== $self.config.tid) {
                 return;
             }
             var acCall = $self.getPredictions();
